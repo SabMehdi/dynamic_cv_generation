@@ -1,0 +1,138 @@
+{
+  "education": {
+    "items": [
+      {
+        "degree": "Master 2 - Technologies de l'Hypermédia",
+        "school": "Université Paris 8 | 2024"
+      },
+      {
+        "degree": "Master 1 - Ingénierie des Systèmes d'Information",
+        "school": "ESISA, Maroc | 2023"
+      },
+      {
+        "degree": "Licence - Ingénierie Logicielle",
+        "school": "ESISA, Maroc | 2022"
+      }
+    ],
+    "title": "FORMATION ACADÉMIQUE"
+  },
+  "experience": {
+    "items": [
+      {
+        "date": "Mai 2025 - Sept 2025",
+        "desc": "Conception et implémentation d'une solution de génération de configurations pour Kong Gateway en Spring Boot. Développement d'APIs réactives (WebFlux) et d'une CLI interactive pour faciliter le déploiement. Mise en place de pipelines CI/CD automatisés pour tests et livraison.\nRésultats : réduction du temps de déploiement de 30% et amélioration de la fiabilité des rollouts.",
+        "techs": "Java 21, Spring Boot 3, Spring WebFlux, Kong, Docker, CI/CD",
+        "title": "Développeur Full-Stack | Keiken Digital Solutions"
+      },
+      {
+        "date": "Sept 2024 - Juin 2025",
+        "desc": "Développement de composants AEM robustes (Sling Models, HTL) et intégration de maquettes Figma en respectant les bonnes pratiques BEM. Intégration AEM <-> Magento via des servlets sécurisés.\nRésultats : amélioration de la maintenabilité des templates et accélération du time-to-market des pages produit.",
+        "techs": "Java 17, AEM 6.5/Cloud, Magento API, Docker, CI/CD, html, css, js, SCSS",
+        "title": "Développeur AEM | Bioderma (Mission Keiken)"
+      },
+      {
+        "date": "Fév 2024 - Juil 2024",
+        "desc": "Conception d'une plateforme de gestion de CV basée sur micro-frontends (React) et services Spring Boot, avec MongoDB pour le stockage. Participation à l'architecture d'authentification OAuth2 et orchestration Docker.\nRésultats : architecture évolutive supportant l'intégration continue et le scaling horizontal.",
+        "techs": "Java 21, Spring Boot 3, React 18, MongoDB, Docker, OAuth2",
+        "title": "Développeur Full-Stack | Keiken Digital"
+      },
+      {
+        "date": "Juillet 2022 - Sept 2022",
+        "desc": "Développement d'une application Web de prestation de services en React TypeScript et Node.js, avec MongoDB Atlas.\nTâches : design des modules front-end, création d'API REST et intégration de services tiers.",
+        "techs": "React 18, TypeScript , Node.js, MongoDB Atlas, Express",
+        "title": "Stage Full-Stack | Platine Consultation INC"
+      }
+    ],
+    "title": "EXPÉRIENCE PROFESSIONNELLE"
+  },
+  "header": {
+    "name": "AL MEHDI SABER",
+    "title": "Expert en Architecture et Développement Logiciel - Mewo Campus Métiers"
+  },
+  "main_offsets": {
+    "experience": -6,
+    "header_name": -8,
+    "header_title": 0,
+    "summary": -8
+  },
+  "main_order": [
+    "header_name",
+    "header_title",
+    "summary",
+    "experience"
+  ],
+  "profile_photo_path": "C:/Users/saber/Downloads/me-blue-bg.jpg",
+  "sidebar": {
+    "certifications": [
+      "- Spring Prof. Developer (2025)",
+      "- Kong Developer (2025)",
+      "- AEM Prof. Developer (2024)",
+      "- CCNA (2023)"
+    ],
+    "certifications_title": "CERTIFICATIONS",
+    "contact_items": [
+      {
+        "icon_path": "C:/Users/saber/Desktop/cv creaation/script/cv_editor/static/icons/mail.svg",
+        "text": "saber.almehdi@gmail.com",
+        "type": "email"
+      },
+      {
+        "icon_path": "C:/Users/saber/Desktop/cv creaation/script/cv_editor/static/icons/phone.svg",
+        "text": "07 80 88 08 87",
+        "type": "phone"
+      },
+      {
+        "icon_path": "C:/Users/saber/Desktop/cv creaation/script/cv_editor/static/icons/location.svg",
+        "text": "Paris, France",
+        "type": "location"
+      },
+      {
+        "icon_path": "C:/Users/saber/Desktop/cv creaation/script/cv_editor/static/icons/github.svg",
+        "text": "github.com/SabMehdi",
+        "type": "github"
+      },
+      {
+        "icon_path": "C:/Users/saber/Desktop/cv creaation/script/cv_editor/static/icons/car.svg",
+        "text": "Permis B",
+        "type": "permit"
+      }
+    ],
+    "contact_title": "CONTACT",
+    "languages": [
+      "Arabe: Maternel",
+      "Français: Courant",
+      "Anglais: Courant"
+    ],
+    "languages_title": "LANGUES",
+    "logo_h": 50,
+    "logo_path": "C:\\Users\\saber\\Desktop\\cv creaation\\script\\cv_editor\\static\\icons\\image.png",
+    "logo_w": 60,
+    "skills": [
+      {
+        "category": "Languages",
+        "items": "Java, JS, Python, Dart"
+      },
+      {
+        "category": "Frameworks",
+        "items": "Spring Boot, React, Node"
+      },
+      {
+        "category": "Cloud/DevOps",
+        "items": "Docker, CI/CD, Git"
+      },
+      {
+        "category": "CMS",
+        "items": "AEM (Adobe Experience)"
+      },
+      {
+        "category": "Bases de données",
+        "items": "PostgreSQL, MongoDB"
+      }
+    ],
+    "skills_title": "COMPÉTENCES"
+  },
+  "summary": {
+    "text": "Ingénieur logiciel spécialisé en développement Full-Stack avec une expertise en Java, Spring Boot, React et architectures web modernes. Expérimenté dans le développement d’API, intégration des maquettes Figma dans un environnement Agile, je recherche une alternance pour approfondir mes compétences en architecture logicielle et systèmes d’information.\n",
+    "title": "RÉSUMÉ PROFESSIONNEL"
+  }
+}
