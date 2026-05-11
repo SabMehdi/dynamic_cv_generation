@@ -1,0 +1,5 @@
+services:
+  cv-editor:
+    build: .
+    ports:
+      - "5179:5179"

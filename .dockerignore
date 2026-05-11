@@ -1,0 +1,16 @@
+.git
+.gitignore
+.cursor
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.mypy_cache
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+Desktop.ini
