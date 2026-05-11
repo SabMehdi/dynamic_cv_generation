@@ -61,7 +61,7 @@
     "summary",
     "experience"
   ],
-  "profile_photo_path": "C:/Users/saber/Downloads/me-blue-bg.jpg",
+  "profile_photo_path": "cv_editor/static/profile.jpg",
   "sidebar": {
     "certifications": [
       "- Spring Prof. Developer (2025)",
@@ -72,27 +72,27 @@
     "certifications_title": "CERTIFICATIONS",
     "contact_items": [
       {
-        "icon_path": "C:/Users/saber/Desktop/cv creaation/script/cv_editor/static/icons/mail.svg",
+        "icon_path": "cv_editor/static/icons/mail.svg",
         "text": "saber.almehdi@gmail.com",
         "type": "email"
       },
       {
-        "icon_path": "C:/Users/saber/Desktop/cv creaation/script/cv_editor/static/icons/phone.svg",
+        "icon_path": "cv_editor/static/icons/phone.svg",
         "text": "07 80 88 08 87",
         "type": "phone"
       },
       {
-        "icon_path": "C:/Users/saber/Desktop/cv creaation/script/cv_editor/static/icons/location.svg",
+        "icon_path": "cv_editor/static/icons/location.svg",
         "text": "Paris, France",
         "type": "location"
       },
       {
-        "icon_path": "C:/Users/saber/Desktop/cv creaation/script/cv_editor/static/icons/github.svg",
+        "icon_path": "cv_editor/static/icons/github.svg",
         "text": "github.com/SabMehdi",
         "type": "github"
       },
       {
-        "icon_path": "C:/Users/saber/Desktop/cv creaation/script/cv_editor/static/icons/car.svg",
+        "icon_path": "cv_editor/static/icons/car.svg",
         "text": "Permis B",
         "type": "permit"
       }
@@ -105,7 +105,7 @@
     ],
     "languages_title": "LANGUES",
     "logo_h": 50,
-    "logo_path": "C:\\Users\\saber\\Desktop\\cv creaation\\script\\cv_editor\\static\\icons\\image.png",
+    "logo_path": "cv_editor/static/icons/image.png",
     "logo_w": 60,
     "skills": [
       {
