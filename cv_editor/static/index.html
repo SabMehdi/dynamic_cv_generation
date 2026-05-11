@@ -70,12 +70,12 @@
       button:disabled { opacity: 0.55; cursor: not-allowed; }
 
       .layout {
-        <!--/* max-width: 1200px; */-->
         margin: 0 auto;
         padding: 18px;
         display: grid;
         grid-template-columns: 1.1fr 0.9fr;
         gap: 16px;
+        align-items: start;
       }
       @media (max-width: 980px) {
         .layout { grid-template-columns: 1fr; }
@@ -171,14 +171,71 @@
       .status { font-size: 12px; color: var(--muted); }
       .status strong { color: var(--text); }
 
+      .pdf-fonts-root { display: flex; flex-direction: column; gap: 12px; }
+      .font-group-title {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-top: 4px;
+      }
+      .font-row {
+        display: grid;
+        grid-template-columns: minmax(140px, 1.2fr) repeat(4, minmax(0, 1fr));
+        gap: 8px;
+        align-items: end;
+        padding: 10px;
+        border: 1px solid var(--border);
+        background: rgba(15,23,48,.55);
+        border-radius: 10px;
+      }
+      @media (max-width: 980px) {
+        .font-row {
+          grid-template-columns: 1fr 1fr;
+        }
+        .font-row .font-row-label { grid-column: 1 / -1; }
+      }
+      .font-row-label { font-size: 12px; color: var(--text); font-weight: 600; }
+      .font-row .field { gap: 4px; }
+      .font-row .field label { font-size: 11px; }
+      .font-row input, .font-row select { padding: 8px; font-size: 12px; }
+
       .preview {
         border: 1px solid var(--border);
         border-radius: 14px;
         overflow: hidden;
         background: rgba(0,0,0,.25);
-        min-height: 620px;
+        min-height: min(620px, calc(100vh - 96px));
+        width: 100%;
       }
-      iframe { width: 100%; height: 100%; min-height: 620px; border: 0; background: white; }
+      @media (min-width: 981px) {
+        .preview {
+          position: sticky;
+          top: 72px;
+          align-self: start;
+          max-height: calc(100vh - 88px);
+          height: calc(100vh - 88px);
+          display: flex;
+          flex-direction: column;
+        }
+        .preview iframe {
+          flex: 1 1 auto;
+          min-height: 0;
+          width: 100%;
+          height: 100%;
+          border: 0;
+          background: white;
+        }
+      }
+      @media (max-width: 980px) {
+        .preview iframe {
+          width: 100%;
+          min-height: 560px;
+          border: 0;
+          background: white;
+        }
+      }
     </style>
   </head>
   <body>
@@ -252,6 +309,18 @@
             </div>
           </div>
 
+          <div class="panel" style="background: rgba(0,0,0,0.0); border-color: rgba(255,255,255,.12); margin-bottom: 14px;">
+            <div class="panel-header">
+              <div>
+                <h2>PDF typography</h2>
+                <p>Font size (pt), style, line height / row height (mm) for the exported PDF. Save, then refresh preview.</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div id="pdfFontsPanel" class="pdf-fonts-root"></div>
+            </div>
+          </div>
+
           <div class="panel" style="background: rgba(0,0,0,0.0); border-color: rgba(255,255,255,.12);">
             <div class="panel-header">
               <div>
@@ -290,6 +359,128 @@
       };
 
       const SECTION_KEYS = ["header_name", "header_title", "summary", "experience"];
+
+      const PDF_FONT_DEFAULTS = {
+        sidebar_contact_title: { size: 12, style: "B", cell_h: 10 },
+        sidebar_contact_text: { size: 9, style: "", line: 5 },
+        sidebar_photo_label: { size: 8, style: "B", cell_h: 5 },
+        sidebar_block_title: { size: 12, style: "B", cell_h: 10 },
+        sidebar_cert_text: { size: 8, style: "", cell_h: 5 },
+        sidebar_skill_category: { size: 8, style: "B", cell_h: 4 },
+        sidebar_skill_items: { size: 8, style: "", line: 4 },
+        sidebar_lang_text: { size: 9, style: "", cell_h: 5 },
+        header_name: { size: 28, style: "B", line: 10 },
+        header_title: { size: 16, style: "", line: 7 },
+        summary_title: { size: 11, style: "B", cell_h: 5 },
+        summary_body: { size: 9, style: "", line: 4 },
+        exp_section_title: { size: 11, style: "B", cell_h: 5 },
+        exp_item_title: { size: 10, style: "B", cell_h: 5 },
+        exp_item_date: { size: 8, style: "I", cell_h: 5 },
+        exp_item_desc: { size: 8, style: "", line: 4 },
+        exp_tech_label: { size: 8, style: "B", line: 5 },
+        exp_tech_body: { size: 8, style: "", line: 5 },
+        edu_section_title: { size: 11, style: "B", cell_h: 5 },
+        edu_degree: { size: 9, style: "B", cell_h: 5 },
+        edu_school: { size: 9, style: "", cell_h: 5 },
+      };
+
+      const PDF_FONT_KEYS = [
+        { group: "Sidebar", key: "sidebar_contact_title", label: "Contact block title", line: false, cell: true },
+        { group: "Sidebar", key: "sidebar_contact_text", label: "Contact lines", line: true, cell: false },
+        { group: "Sidebar", key: "sidebar_photo_label", label: "Photo placeholder", line: false, cell: true },
+        { group: "Sidebar", key: "sidebar_block_title", label: "Section titles (cert / skills / languages)", line: false, cell: true },
+        { group: "Sidebar", key: "sidebar_cert_text", label: "Certification lines", line: false, cell: true },
+        { group: "Sidebar", key: "sidebar_skill_category", label: "Skill category", line: false, cell: true },
+        { group: "Sidebar", key: "sidebar_skill_items", label: "Skill items (wrapped)", line: true, cell: false },
+        { group: "Sidebar", key: "sidebar_lang_text", label: "Language lines", line: false, cell: true },
+        { group: "Header & summary", key: "header_name", label: "Name", line: true, cell: false },
+        { group: "Header & summary", key: "header_title", label: "Subtitle / title", line: true, cell: false },
+        { group: "Header & summary", key: "summary_title", label: "Summary section title", line: false, cell: true },
+        { group: "Header & summary", key: "summary_body", label: "Summary body", line: true, cell: false },
+        { group: "Experience", key: "exp_section_title", label: "Experience section title", line: false, cell: true },
+        { group: "Experience", key: "exp_item_title", label: "Job title line", line: false, cell: true },
+        { group: "Experience", key: "exp_item_date", label: "Date (right)", line: false, cell: true },
+        { group: "Experience", key: "exp_item_desc", label: "Description", line: true, cell: false },
+        { group: "Experience", key: "exp_tech_label", label: "“Technologies :” label", line: true, cell: false },
+        { group: "Experience", key: "exp_tech_body", label: "Technologies text", line: true, cell: false },
+        { group: "Education", key: "edu_section_title", label: "Education section title", line: false, cell: true },
+        { group: "Education", key: "edu_degree", label: "Degree line", line: false, cell: true },
+        { group: "Education", key: "edu_school", label: "School line", line: false, cell: true },
+      ];
+
+      function ensurePdfFonts() {
+        if (!cv.pdf_fonts || typeof cv.pdf_fonts !== "object") cv.pdf_fonts = {};
+        for (const [key, def] of Object.entries(PDF_FONT_DEFAULTS)) {
+          cv.pdf_fonts[key] = { ...def, ...(cv.pdf_fonts[key] || {}) };
+        }
+      }
+
+      function renderPdfFontsPanel() {
+        ensurePdfFonts();
+        const root = qs("pdfFontsPanel");
+        let lastGroup = "";
+        const rows = PDF_FONT_KEYS.map((row) => {
+          const f = cv.pdf_fonts[row.key];
+          let groupHtml = "";
+          if (row.group !== lastGroup) {
+            lastGroup = row.group;
+            groupHtml = `<div class="font-group-title">${row.group}</div>`;
+          }
+          const lineField = row.line
+            ? `<div class="field"><label>Line (mm)</label><input type="number" step="0.5" id="pdf_font_${row.key}_line" value="${f.line}" /></div>`
+            : `<div class="field"><label>Line (mm)</label><input disabled placeholder="—" style="opacity:0.45" /></div>`;
+          const cellField = row.cell
+            ? `<div class="field"><label>Row H (mm)</label><input type="number" step="0.5" id="pdf_font_${row.key}_cell" value="${f.cell_h}" /></div>`
+            : `<div class="field"><label>Row H (mm)</label><input disabled placeholder="—" style="opacity:0.45" /></div>`;
+          const styleOpts = ["", "B", "I", "BI"].map((v) => {
+            const lab = v === "" ? "Normal" : v === "B" ? "Bold" : v === "I" ? "Italic" : "Bold italic";
+            const sel = f.style === v ? " selected" : "";
+            return `<option value="${v}"${sel}>${lab}</option>`;
+          }).join("");
+          return (
+            groupHtml +
+            `<div class="font-row">
+              <div class="font-row-label">${row.label}</div>
+              <div class="field"><label>Size (pt)</label><input type="number" step="0.5" id="pdf_font_${row.key}_size" value="${f.size}" /></div>
+              <div class="field"><label>Style</label><select id="pdf_font_${row.key}_style">${styleOpts}</select></div>
+              ${lineField}
+              ${cellField}
+            </div>`
+          );
+        });
+        root.innerHTML = rows.join("");
+      }
+
+      function readPdfFontsIntoCv() {
+        ensurePdfFonts();
+        for (const row of PDF_FONT_KEYS) {
+          const key = row.key;
+          const base = PDF_FONT_DEFAULTS[key];
+          const szEl = qs(`pdf_font_${key}_size`);
+          const stEl = qs(`pdf_font_${key}_style`);
+          if (!szEl || !stEl) continue;
+          let size = parseFloat(szEl.value);
+          if (Number.isNaN(size) || size <= 0) size = base.size;
+          const o = { ...cv.pdf_fonts[key], size, style: stEl.value || "" };
+          if (row.line) {
+            const ln = qs(`pdf_font_${key}_line`);
+            if (ln) {
+              let line = parseFloat(ln.value);
+              if (Number.isNaN(line) || line <= 0) line = base.line;
+              o.line = line;
+            }
+          }
+          if (row.cell) {
+            const ch = qs(`pdf_font_${key}_cell`);
+            if (ch) {
+              let cell_h = parseFloat(ch.value);
+              if (Number.isNaN(cell_h) || cell_h <= 0) cell_h = base.cell_h;
+              o.cell_h = cell_h;
+            }
+          }
+          cv.pdf_fonts[key] = o;
+        }
+      }
 
       function ensureMainOffsets() {
         if (!cv.main_offsets || typeof cv.main_offsets !== "object") cv.main_offsets = {};
@@ -347,6 +538,8 @@
         const h = qs("sidebar_logo_h").value.trim();
         cv.sidebar.logo_w = w ? Number(w) : undefined;
         cv.sidebar.logo_h = h ? Number(h) : undefined;
+
+        readPdfFontsIntoCv();
       }
 
       function writeCvIntoMainFields() {
@@ -435,6 +628,7 @@
         if (!cv.sidebar) cv.sidebar = {};
         writeCvIntoMainFields();
         renderMainOffsets();
+        renderPdfFontsPanel();
         renderExperiences();
         setStatus("Ready");
       }
