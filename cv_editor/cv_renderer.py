@@ -112,6 +112,43 @@ class CV(FPDF):
                 base["cell_h"] = float(dch) if dch is not None else base["size"] * 0.55
         return base
 
+    def _normalize_experience_items(self, exp: Dict[str, Any]) -> List[Dict[str, Any]]:
+        raw_items = exp.get("items", []) or []
+        normalized = []
+        for item in raw_items:
+            if not isinstance(item, dict):
+                continue
+            if isinstance(item.get("missions"), list):
+                missions = []
+                for mission in item.get("missions", []):
+                    if not isinstance(mission, dict):
+                        continue
+                    missions.append({
+                        "title": str(mission.get("title", "") or ""),
+                        "date": str(mission.get("date", "") or ""),
+                        "desc": str(mission.get("desc", "") or ""),
+                        "techs": str(mission.get("techs", "") or ""),
+                    })
+                normalized.append({
+                    "company": str(item.get("company", "") or ""),
+                    "period": str(item.get("period", "") or ""),
+                    "missions": missions,
+                })
+                continue
+            normalized.append({
+                "company": str(item.get("company", "") or ""),
+                "period": str(item.get("period", item.get("date", "") or "") or ""),
+                "missions": [
+                    {
+                        "title": str(item.get("title", "") or ""),
+                        "date": str(item.get("date", "") or ""),
+                        "desc": str(item.get("desc", "") or ""),
+                        "techs": str(item.get("techs", "") or ""),
+                    }
+                ],
+            })
+        return normalized
+
     def _fit_header_text(self, text: str) -> str:
         # Normalize whitespace so multi_cell wraps predictably
         return " ".join(str(text or "").split())
@@ -309,40 +346,65 @@ class CV(FPDF):
             self.line(75, self.get_y(), 200, self.get_y())
 
             y_offset = float(self.get_y() + 2)
-            experiences: List[Dict[str, str]] = exp.get("items", [])
+            experiences = self._normalize_experience_items(exp)
             fit = self._font("exp_item_title")
             fid = self._font("exp_item_date")
             fde = self._font("exp_item_desc")
             ftl = self._font("exp_tech_label")
             ftb = self._font("exp_tech_body")
-            for idx, item in enumerate(experiences):
-                self.set_xy(75, y_offset)
-                self.set_font(self.font_family, fit["style"], fit["size"])
-                self.cell(100, fit["cell_h"], str(item.get("title", "")), 0, 0, "L")
-                self.set_font(self.font_family, fid["style"], fid["size"])
-                self.cell(25, fid["cell_h"], str(item.get("date", "")), 0, 1, "R")
+            for idx, group in enumerate(experiences):
+                missions = [m for m in (group.get("missions") or []) if isinstance(m, dict)]
+                if not missions:
+                    continue
 
-                self.set_font(self.font_family, fde["style"], fde["size"])
-                self.set_x(75)
-                self.multi_cell(125, fde["line"], str(item.get("desc", "")), 0, "L")
+                company = str(group.get("company", "") or "").strip()
+                period = str(group.get("period", "") or "").strip()
+                show_group_header = bool(company or period or len(missions) > 1)
 
-                techs = str(item.get("techs", "")).strip()
-                if techs:
+                if show_group_header:
+                    self.set_xy(75, y_offset)
+                    self.set_font(self.font_family, fit["style"], fit["size"])
+                    self.cell(100, fit["cell_h"], company or "Experience", 0, 0, "L")
+                    self.set_font(self.font_family, fid["style"], fid["size"])
+                    self.cell(25, fid["cell_h"], period, 0, 1, "R")
+                    y_offset = float(self.get_y() + 2)
+
+                for mission_index, mission in enumerate(missions):
+                    title = str(mission.get("title", "") or "").strip()
+                    date = str(mission.get("date", "") or "").strip()
+                    display_title = title or "Untitled mission"
+                    if show_group_header:
+                        display_title = f"• {display_title}"
+
+                    self.set_xy(75, y_offset)
+                    self.set_font(self.font_family, fit["style"], fit["size"])
+                    self.cell(100, fit["cell_h"], display_title, 0, 0, "L")
+                    self.set_font(self.font_family, fid["style"], fid["size"])
+                    self.cell(25, fid["cell_h"], date, 0, 1, "R")
+
+                    self.set_font(self.font_family, fde["style"], fde["size"])
                     self.set_x(75)
-                    self.set_font(self.font_family, ftl["style"], ftl["size"])
-                    self.set_text_color(41, 54, 82)
-                    self.write(ftl["line"], "Technologies : ")
-                    self.set_font(self.font_family, ftb["style"], ftb["size"])
-                    self.write(ftb["line"], techs)
-                    self.ln(4)
-                else:
-                    self.ln(2)
+                    self.multi_cell(125, fde["line"], str(mission.get("desc", "")), 0, "L")
 
-                if idx != len(experiences) - 1:
-                    sep_y = self.get_y() + 3
-                    self.set_draw_color(220, 220, 220)
-                    self.line(75, sep_y, 200, sep_y)
-                    y_offset = sep_y + 2
+                    techs = str(mission.get("techs", "") or "").strip()
+                    if techs:
+                        self.set_x(75)
+                        self.set_font(self.font_family, ftl["style"], ftl["size"])
+                        self.set_text_color(41, 54, 82)
+                        self.write(ftl["line"], "Technologies : ")
+                        self.set_font(self.font_family, ftb["style"], ftb["size"])
+                        self.write(ftb["line"], techs)
+                        self.ln(4)
+                    else:
+                        self.ln(2)
+
+                    if idx != len(experiences) - 1 or mission_index != len(missions) - 1:
+                        sep_y = self.get_y() + 3
+                        self.set_draw_color(220, 220, 220)
+                        self.line(75, sep_y, 200, sep_y)
+                        y_offset = sep_y + 2
+                    else:
+                        y_offset = self.get_y()
             return float(self.get_y())
 
         def render_education(y: float) -> None:

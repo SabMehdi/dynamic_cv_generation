@@ -17,33 +17,45 @@
     "title": "FORMATION ACADÉMIQUE"
   },
   "experience": {
+    "title": "EXPÉRIENCE PROFESSIONNELLE",
     "items": [
       {
-        "date": "Mai 2025 - Sept 2025",
-        "desc": "Conception et implémentation d'une solution de génération de configurations pour Kong Gateway en Spring Boot. Développement d'APIs réactives (WebFlux) et d'une CLI interactive pour faciliter le déploiement. Mise en place de pipelines CI/CD automatisés pour tests et livraison.\nRésultats : réduction du temps de déploiement de 30% et amélioration de la fiabilité des rollouts.",
-        "techs": "Java 21, Spring Boot 3, Spring WebFlux, Kong, Docker, CI/CD",
-        "title": "Développeur Full-Stack | Keiken Digital Solutions"
+        "company": "Keiken Digital Solutions",
+        "period": "Fév 2024 - Sept 2025",
+        "missions": [
+          {
+            "title": "Développeur Full-Stack",
+            "date": "Mai 2025 - Sept 2025",
+            "desc": "Conception et implémentation d'une solution de génération de configurations pour Kong Gateway en Spring Boot. Développement d'APIs réactives (WebFlux) et d'une CLI interactive pour faciliter le déploiement. Mise en place de pipelines CI/CD automatisés pour tests et livraison.\nRésultats : réduction du temps de déploiement de 30% et amélioration de la fiabilité des rollouts.",
+            "techs": "Java 21, Spring Boot 3, Spring WebFlux, Kong, Docker, CI/CD"
+          },
+          {
+            "title": "Développeur AEM | Bioderma (Mission Keiken)",
+            "date": "Sept 2024 - Juin 2025",
+            "desc": "Développement de composants AEM robustes (Sling Models, HTL) et intégration de maquettes Figma en respectant les bonnes pratiques BEM. Intégration AEM <-> Magento via des servlets sécurisés.\nRésultats : amélioration de la maintenabilité des templates et accélération du time-to-market des pages produit.",
+            "techs": "Java 17, AEM 6.5/Cloud, Magento API, Docker, CI/CD, html, css, js, SCSS"
+          },
+          {
+            "title": "Développeur Full-Stack",
+            "date": "Fév 2024 - Juil 2024",
+            "desc": "Conception d'une plateforme de gestion de CV basée sur micro-frontends (React) et services Spring Boot, avec MongoDB pour le stockage. Participation à l'architecture d'authentification OAuth2 et orchestration Docker.\nRésultats : architecture évolutive supportant l'intégration continue et le scaling horizontal.",
+            "techs": "Java 21, Spring Boot 3, React 18, MongoDB, Docker, OAuth2"
+          }
+        ]
       },
       {
-        "date": "Sept 2024 - Juin 2025",
-        "desc": "Développement de composants AEM robustes (Sling Models, HTL) et intégration de maquettes Figma en respectant les bonnes pratiques BEM. Intégration AEM <-> Magento via des servlets sécurisés.\nRésultats : amélioration de la maintenabilité des templates et accélération du time-to-market des pages produit.",
-        "techs": "Java 17, AEM 6.5/Cloud, Magento API, Docker, CI/CD, html, css, js, SCSS",
-        "title": "Développeur AEM | Bioderma (Mission Keiken)"
-      },
-      {
-        "date": "Fév 2024 - Juil 2024",
-        "desc": "Conception d'une plateforme de gestion de CV basée sur micro-frontends (React) et services Spring Boot, avec MongoDB pour le stockage. Participation à l'architecture d'authentification OAuth2 et orchestration Docker.\nRésultats : architecture évolutive supportant l'intégration continue et le scaling horizontal.",
-        "techs": "Java 21, Spring Boot 3, React 18, MongoDB, Docker, OAuth2",
-        "title": "Développeur Full-Stack | Keiken Digital"
-      },
-      {
-        "date": "Juillet 2022 - Sept 2022",
-        "desc": "Développement d'une application Web de prestation de services en React TypeScript et Node.js, avec MongoDB Atlas.\nTâches : design des modules front-end, création d'API REST et intégration de services tiers.",
-        "techs": "React 18, TypeScript , Node.js, MongoDB Atlas, Express",
-        "title": "Stage Full-Stack | Platine Consultation INC"
+        "company": "Platine Consultation INC",
+        "period": "Juillet 2022 - Sept 2022",
+        "missions": [
+          {
+            "title": "Stage Full-Stack",
+            "date": "Juillet 2022 - Sept 2022",
+            "desc": "Développement d'une application Web de prestation de services en React TypeScript et Node.js, avec MongoDB Atlas.\nTâches : design des modules front-end, création d'API REST et intégration de services tiers.",
+            "techs": "React 18, TypeScript , Node.js, MongoDB Atlas, Express"
+          }
+        ]
       }
-    ],
-    "title": "EXPÉRIENCE PROFESSIONNELLE"
+    ]
   },
   "header": {
     "name": "AL MEHDI SABER",
