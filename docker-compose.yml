@@ -3,3 +3,19 @@ services:
     build: .
     ports:
       - "5179:5179"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/cveditor
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: cveditor
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

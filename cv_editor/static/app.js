@@ -391,10 +391,14 @@ async function saveCv() {
   readMainFieldsIntoCv();
   applyOrderFromDom();
   setStatus("Saving…");
+  const name = window.prompt("Save name (optional):", "");
+  const payload = { data: cv };
+  if (name && name.trim()) payload.name = name.trim();
+
   const res = await fetch("/api/cv", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(cv),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     const t = await res.text();
@@ -403,6 +407,71 @@ async function saveCv() {
     return;
   }
   setStatus("Saved");
+}
+
+async function loadCvById(id) {
+  setStatus("Loading…");
+  const res = await fetch(`/api/cv/${id}`);
+  if (!res.ok) {
+    setStatus("Load failed");
+    alert("Failed to load CV: " + res.statusText);
+    return;
+  }
+  cv = await res.json();
+  normalizeExperienceGroups();
+  if (!cv.header) cv.header = { name: "", title: "" };
+  if (!cv.summary) cv.summary = { title: "RÉSUMÉ PROFESSIONNEL", text: "" };
+  if (!cv.sidebar) cv.sidebar = {};
+  writeCvIntoMainFields();
+  renderMainOffsets();
+  renderPdfFontsPanel();
+  renderExperiences();
+  setStatus("Ready");
+  refreshPdf();
+}
+
+function showVersionsModal(items) {
+  const overlay = document.createElement("div");
+  overlay.style = `position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999;`;
+  const box = document.createElement("div");
+  box.style = `background:#fff; color:#000; padding:18px; width:560px; max-height:80vh; overflow:auto; border-radius:6px;`;
+  const title = document.createElement("h3");
+  title.innerText = "Saved CVs";
+  box.appendChild(title);
+  const list = document.createElement("div");
+  if (!items || items.length === 0) {
+    const p = document.createElement("div");
+    p.innerText = "No saved CVs found.";
+    box.appendChild(p);
+  } else {
+    items.forEach((it) => {
+      const row = document.createElement("div");
+      row.style = "display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #eee;";
+      const meta = document.createElement("div");
+      meta.innerHTML = `<div style=\"font-weight:600\">${it.name || '(untitled)'} <span style=\"font-weight:400;color:#666;margin-left:8px\">#${it.id}</span></div><div style=\"font-size:12px;color:#666\">${it.created_at}</div>`;
+      const actions = document.createElement("div");
+      const loadBtn = document.createElement("button");
+      loadBtn.innerText = "Open";
+      loadBtn.addEventListener("click", () => {
+        document.body.removeChild(overlay);
+        loadCvById(it.id);
+      });
+      actions.appendChild(loadBtn);
+      row.appendChild(meta);
+      row.appendChild(actions);
+      list.appendChild(row);
+    });
+    box.appendChild(list);
+  }
+  const close = document.createElement("div");
+  close.style = "margin-top:12px; text-align:right;";
+  const closeBtn = document.createElement("button");
+  closeBtn.innerText = "Close";
+  closeBtn.addEventListener("click", () => document.body.removeChild(overlay));
+  close.appendChild(closeBtn);
+  box.appendChild(close);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
 }
 
 function refreshPdf() {
@@ -415,6 +484,14 @@ qs("btnReload").addEventListener("click", async () => {
   refreshPdf();
 });
 qs("btnSave").addEventListener("click", saveCv);
+qs("btnOpen").addEventListener("click", async () => {
+  setStatus("Loading versions…");
+  const res = await fetch('/api/cv/list');
+  if (!res.ok) { setStatus('Failed'); alert('Failed to fetch versions'); return; }
+  const items = await res.json();
+  setStatus('Ready');
+  showVersionsModal(items);
+});
 qs("btnExport").addEventListener("click", async () => {
   await saveCv();
   refreshPdf();
