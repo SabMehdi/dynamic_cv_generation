@@ -1,11 +1,7 @@
 <!-- Tip: Use /create-instructions in chat to generate content with agent assistance -->
 ---
 alwaysApply: true
----
-
----
-description: Behavioral guidelines to reduce common LLM coding mistakes. Use when writing, reviewing, or refactoring code to avoid overcomplication, make surgical changes, surface assumptions, and define verifiable success criteria.
-alwaysApply: true
+description: "Behavioral guidelines to reduce common LLM coding mistakes. Use when writing, reviewing, or refactoring code to avoid overcomplication, make surgical changes, surface assumptions, and define verifiable success criteria."
 ---
 
 # Karpathy behavioral guidelines
