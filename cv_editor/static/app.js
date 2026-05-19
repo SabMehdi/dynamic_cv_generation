@@ -1,8 +1,18 @@
 // app.js
 let cv = null;
+let isDirty = false;
+let lastStatus = "Idle";
 
 const elStatus = document.getElementById("status");
-const setStatus = (text) => (elStatus.innerHTML = `Status: <strong>${text}</strong>`);
+const dirtySuffix = () => (isDirty ? " • Unsaved changes" : "");
+const setStatus = (text) => {
+  lastStatus = text;
+  elStatus.innerHTML = `Status: <strong>${text}</strong>${dirtySuffix()}`;
+};
+const setDirty = (value) => {
+  isDirty = value;
+  setStatus(lastStatus);
+};
 
 const qs = (id) => document.getElementById(id);
 
@@ -172,10 +182,12 @@ function renderMainOffsets() {
     row.querySelector(".btnUp").addEventListener("click", () => {
       cv.main_offsets[key] = Number(cv.main_offsets[key] || 0) - 2;
       renderMainOffsets();
+      setDirty(true);
     });
     row.querySelector(".btnDown").addEventListener("click", () => {
       cv.main_offsets[key] = Number(cv.main_offsets[key] || 0) + 2;
       renderMainOffsets();
+      setDirty(true);
     });
   });
 }
@@ -322,6 +334,7 @@ function renderExperiences() {
     delGroup.addEventListener("click", () => {
       cv.experience.items.splice(groupIndex, 1);
       renderExperiences();
+      setDirty(true);
     });
 
     const addMission = card.querySelector(".btnAddMission");
@@ -329,13 +342,16 @@ function renderExperiences() {
       if (!Array.isArray(group.missions)) group.missions = [];
       group.missions.push({ title: "", date: "", desc: "", techs: "" });
       renderExperiences();
+      setDirty(true);
     });
 
     card.querySelector(".fCompany").addEventListener("input", (e) => {
       group.company = e.target.value;
+      setDirty(true);
     });
     card.querySelector(".fPeriod").addEventListener("input", (e) => {
       group.period = e.target.value;
+      setDirty(true);
     });
 
     card.querySelectorAll(".mission-card").forEach((missionCard) => {
@@ -346,19 +362,24 @@ function renderExperiences() {
       missionCard.querySelector(".btnDeleteMission").addEventListener("click", () => {
         group.missions.splice(missionIndex, 1);
         renderExperiences();
+        setDirty(true);
       });
 
       missionCard.querySelector(".fMissionTitle").addEventListener("input", (e) => {
         mission.title = e.target.value;
+        setDirty(true);
       });
       missionCard.querySelector(".fMissionDate").addEventListener("input", (e) => {
         mission.date = e.target.value;
+        setDirty(true);
       });
       missionCard.querySelector(".fMissionDesc").addEventListener("input", (e) => {
         mission.desc = e.target.value;
+        setDirty(true);
       });
       missionCard.querySelector(".fMissionTechs").addEventListener("input", (e) => {
         mission.techs = e.target.value;
+        setDirty(true);
       });
     });
   });
@@ -385,16 +406,15 @@ async function loadCv() {
   renderPdfFontsPanel();
   renderExperiences();
   setStatus("Ready");
+  setDirty(false);
 }
 
-async function saveCv() {
+async function saveDraft() {
   readMainFieldsIntoCv();
   applyOrderFromDom();
-  setStatus("Saving…");
-  const name = window.prompt("Save name (optional):", "");
-  const payload = { data: cv };
-  if (name && name.trim()) payload.name = name.trim();
+  setStatus("Saving draft…");
 
+  const payload = { data: cv };
   const res = await fetch("/api/cv", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -402,11 +422,45 @@ async function saveCv() {
   });
   if (!res.ok) {
     const t = await res.text();
-    setStatus("Save failed");
-    alert("Save failed: " + t);
-    return;
+    setStatus("Draft save failed");
+    alert("Draft save failed: " + t);
+    return false;
   }
-  setStatus("Saved");
+
+  setDirty(false);
+  setStatus("Draft saved");
+  return true;
+}
+
+async function saveVersion() {
+  readMainFieldsIntoCv();
+  applyOrderFromDom();
+  setStatus("Saving version…");
+
+  const name = window.prompt("Version name (optional):", "");
+  const payload = { data: cv };
+  if (name && name.trim()) payload.name = name.trim();
+
+  const res = await fetch("/api/cv/version", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    setStatus("Version save failed");
+    alert("Version save failed: " + t);
+    return false;
+  }
+
+  const body = await res.json();
+  setDirty(false);
+  setStatus(`Saved version #${body.version_id || "?"}`);
+  return true;
+}
+
+async function saveCv() {
+  return saveDraft();
 }
 
 async function loadCvById(id) {
@@ -427,6 +481,7 @@ async function loadCvById(id) {
   renderPdfFontsPanel();
   renderExperiences();
   setStatus("Ready");
+  setDirty(false);
   refreshPdf();
 }
 
@@ -479,12 +534,28 @@ function refreshPdf() {
   frame.src = "/api/pdf?t=" + Date.now();
 }
 
+document.addEventListener("input", (event) => {
+  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement) {
+    setDirty(true);
+  }
+});
+
+window.addEventListener("beforeunload", (event) => {
+  if (isDirty) {
+    event.preventDefault();
+    event.returnValue = "You have unsaved changes. Are you sure you want to leave?";
+  }
+});
+
 qs("btnReload").addEventListener("click", async () => {
+  if (isDirty && !window.confirm("You have unsaved changes. Reloading will discard them. Continue?")) return;
   await loadCv();
   refreshPdf();
 });
-qs("btnSave").addEventListener("click", saveCv);
+qs("btnSaveDraft").addEventListener("click", saveDraft);
+qs("btnSaveVersion").addEventListener("click", saveVersion);
 qs("btnOpen").addEventListener("click", async () => {
+  if (isDirty && !window.confirm("You have unsaved changes. Opening a saved version will discard them. Continue?")) return;
   setStatus("Loading versions…");
   const res = await fetch('/api/cv/list');
   if (!res.ok) { setStatus('Failed'); alert('Failed to fetch versions'); return; }
@@ -493,8 +564,8 @@ qs("btnOpen").addEventListener("click", async () => {
   showVersionsModal(items);
 });
 qs("btnExport").addEventListener("click", async () => {
-  await saveCv();
-  refreshPdf();
+  const saved = await saveDraft();
+  if (saved) refreshPdf();
 });
 qs("btnAddExp").addEventListener("click", () => {
   cv.experience.items.unshift({
@@ -503,6 +574,7 @@ qs("btnAddExp").addEventListener("click", () => {
     missions: [{ title: "", date: "", desc: "", techs: "" }],
   });
   renderExperiences();
+  setDirty(true);
 });
 
 new Sortable(qs("expList"), {
@@ -511,6 +583,7 @@ new Sortable(qs("expList"), {
   onEnd: () => {
     applyOrderFromDom();
     renderExperiences();
+    setDirty(true);
   },
 });
 

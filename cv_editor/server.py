@@ -61,11 +61,27 @@ def create_app() -> Flask:
             return jsonify({"error": "Expected CV JSON object"}), 400
 
         save_data(data)
-        try:
-            vid = save_version(name, data)
-        except Exception:
-            # don't fail the whole request if DB save fails
-            vid = None
+        return jsonify({"ok": True})
+
+    @app.post("/api/cv/version")
+    def post_cv_version() -> Response:
+        body = request.get_json(force=True, silent=False)
+        if not body:
+            return jsonify({"error": "Expected JSON body"}), 400
+
+        # support payloads: either the raw CV object, or {name:..., data:...}
+        if isinstance(body, dict) and "data" in body:
+            data = body["data"]
+            name = body.get("name")
+        else:
+            data = body
+            name = request.args.get("name")
+
+        if not isinstance(data, dict):
+            return jsonify({"error": "Expected CV JSON object"}), 400
+
+        save_data(data)
+        vid = save_version(name, data)
         return jsonify({"ok": True, "version_id": vid})
 
     @app.get("/api/cv/list")
