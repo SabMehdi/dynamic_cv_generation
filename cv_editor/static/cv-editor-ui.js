@@ -39,6 +39,9 @@ export class CvRenderer {
       const cellField = row.cell
         ? `<div class="field"><label>Row H (mm)</label><input type="number" step="0.5" id="pdf_font_${row.key}_cell" value="${f.cell_h}" /></div>`
         : `<div class="field"><label>Row H (mm)</label><input disabled placeholder="—" style="opacity:0.45" /></div>`;
+      const colorField = row.color
+        ? `<div class="field"><label>Color</label><input type="color" id="pdf_font_${row.key}_color" value="${f.color || '#000000'}" /></div>`
+        : ``;
 
       const styleOpts = ["", "B", "I", "BI"].map((value) => {
         const label = value === "" ? "Normal" : value === "B" ? "Bold" : value === "I" ? "Italic" : "Bold italic";
@@ -54,6 +57,7 @@ export class CvRenderer {
           <div class="field"><label>Style</label><select id="pdf_font_${row.key}_style">${styleOpts}</select></div>
           ${lineField}
           ${cellField}
+          ${colorField}
         </div>`
       );
     });

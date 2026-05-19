@@ -8,51 +8,51 @@ export const SECTION_LABELS = {
 export const SECTION_KEYS = ["header_name", "header_title", "summary", "experience"];
 
 export const PDF_FONT_DEFAULTS = {
-  sidebar_contact_title: { size: 12, style: "B", cell_h: 10 },
-  sidebar_contact_text: { size: 9, style: "", line: 5 },
-  sidebar_photo_label: { size: 8, style: "B", cell_h: 5 },
-  sidebar_block_title: { size: 12, style: "B", cell_h: 10 },
-  sidebar_cert_text: { size: 8, style: "", cell_h: 5 },
-  sidebar_skill_category: { size: 8, style: "B", cell_h: 4 },
-  sidebar_skill_items: { size: 8, style: "", line: 4 },
-  sidebar_lang_text: { size: 9, style: "", cell_h: 5 },
-  header_name: { size: 28, style: "B", line: 10 },
-  header_title: { size: 16, style: "", line: 7 },
-  summary_title: { size: 11, style: "B", cell_h: 5 },
-  summary_body: { size: 9, style: "", line: 4 },
-  exp_section_title: { size: 11, style: "B", cell_h: 5 },
-  exp_item_title: { size: 10, style: "B", cell_h: 5 },
-  exp_item_date: { size: 8, style: "I", cell_h: 5 },
-  exp_item_desc: { size: 8, style: "", line: 4 },
-  exp_tech_label: { size: 8, style: "B", line: 5 },
-  exp_tech_body: { size: 8, style: "", line: 5 },
-  edu_section_title: { size: 11, style: "B", cell_h: 5 },
-  edu_degree: { size: 9, style: "B", cell_h: 5 },
-  edu_school: { size: 9, style: "", cell_h: 5 },
+  sidebar_contact_title: { size: 12, style: "B", cell_h: 10, color: "#000000" },
+  sidebar_contact_text: { size: 9, style: "", line: 5, color: "#000000" },
+  sidebar_photo_label: { size: 8, style: "B", cell_h: 5, color: "#000000" },
+  sidebar_block_title: { size: 12, style: "B", cell_h: 10, color: "#000000" },
+  sidebar_cert_text: { size: 8, style: "", cell_h: 5, color: "#000000" },
+  sidebar_skill_category: { size: 8, style: "B", cell_h: 4, color: "#000000" },
+  sidebar_skill_items: { size: 8, style: "", line: 4, color: "#000000" },
+  sidebar_lang_text: { size: 9, style: "", cell_h: 5, color: "#000000" },
+  header_name: { size: 28, style: "B", line: 10, color: "#000000" },
+  header_title: { size: 16, style: "", line: 7, color: "#000000" },
+  summary_title: { size: 11, style: "B", cell_h: 5, color: "#000000" },
+  summary_body: { size: 9, style: "", line: 4, color: "#000000" },
+  exp_section_title: { size: 11, style: "B", cell_h: 5, color: "#000000" },
+  exp_item_title: { size: 10, style: "B", cell_h: 5, color: "#000000" },
+  exp_item_date: { size: 8, style: "I", cell_h: 5, color: "#000000" },
+  exp_item_desc: { size: 8, style: "", line: 4, color: "#000000" },
+  exp_tech_label: { size: 8, style: "B", line: 5, color: "#000000" },
+  exp_tech_body: { size: 8, style: "", line: 5, color: "#000000" },
+  edu_section_title: { size: 11, style: "B", cell_h: 5, color: "#000000" },
+  edu_degree: { size: 9, style: "B", cell_h: 5, color: "#000000" },
+  edu_school: { size: 9, style: "", cell_h: 5, color: "#000000" },
 };
 
 export const PDF_FONT_KEYS = [
-  { group: "Sidebar", key: "sidebar_contact_title", label: "Contact block title", line: false, cell: true },
-  { group: "Sidebar", key: "sidebar_contact_text", label: "Contact lines", line: true, cell: false },
-  { group: "Sidebar", key: "sidebar_photo_label", label: "Photo placeholder", line: false, cell: true },
-  { group: "Sidebar", key: "sidebar_block_title", label: "Section titles (cert / skills / languages)", line: false, cell: true },
-  { group: "Sidebar", key: "sidebar_cert_text", label: "Certification lines", line: false, cell: true },
-  { group: "Sidebar", key: "sidebar_skill_category", label: "Skill category", line: false, cell: true },
-  { group: "Sidebar", key: "sidebar_skill_items", label: "Skill items (wrapped)", line: true, cell: false },
-  { group: "Sidebar", key: "sidebar_lang_text", label: "Language lines", line: false, cell: true },
-  { group: "Header & summary", key: "header_name", label: "Name", line: true, cell: false },
-  { group: "Header & summary", key: "header_title", label: "Subtitle / title", line: true, cell: false },
-  { group: "Header & summary", key: "summary_title", label: "Summary section title", line: false, cell: true },
-  { group: "Header & summary", key: "summary_body", label: "Summary body", line: true, cell: false },
-  { group: "Experience", key: "exp_section_title", label: "Experience section title", line: false, cell: true },
-  { group: "Experience", key: "exp_item_title", label: "Job title line", line: false, cell: true },
-  { group: "Experience", key: "exp_item_date", label: "Date (right)", line: false, cell: true },
-  { group: "Experience", key: "exp_item_desc", label: "Description", line: true, cell: false },
-  { group: "Experience", key: "exp_tech_label", label: "Technologies : label", line: true, cell: false },
-  { group: "Experience", key: "exp_tech_body", label: "Technologies text", line: true, cell: false },
-  { group: "Education", key: "edu_section_title", label: "Education section title", line: false, cell: true },
-  { group: "Education", key: "edu_degree", label: "Degree line", line: false, cell: true },
-  { group: "Education", key: "edu_school", label: "School line", line: false, cell: true },
+  { group: "Sidebar", key: "sidebar_contact_title", label: "Contact block title", line: false, cell: true, color: true },
+  { group: "Sidebar", key: "sidebar_contact_text", label: "Contact lines", line: true, cell: false, color: true },
+  { group: "Sidebar", key: "sidebar_photo_label", label: "Photo placeholder", line: false, cell: true, color: true },
+  { group: "Sidebar", key: "sidebar_block_title", label: "Section titles (cert / skills / languages)", line: false, cell: true, color: true },
+  { group: "Sidebar", key: "sidebar_cert_text", label: "Certification lines", line: false, cell: true, color: true },
+  { group: "Sidebar", key: "sidebar_skill_category", label: "Skill category", line: false, cell: true, color: true },
+  { group: "Sidebar", key: "sidebar_skill_items", label: "Skill items (wrapped)", line: true, cell: false, color: true },
+  { group: "Sidebar", key: "sidebar_lang_text", label: "Language lines", line: false, cell: true, color: true },
+  { group: "Header & summary", key: "header_name", label: "Name", line: true, cell: false, color: true },
+  { group: "Header & summary", key: "header_title", label: "Subtitle / title", line: true, cell: false, color: true },
+  { group: "Header & summary", key: "summary_title", label: "Summary section title", line: false, cell: true, color: true },
+  { group: "Header & summary", key: "summary_body", label: "Summary body", line: true, cell: false, color: true },
+  { group: "Experience", key: "exp_section_title", label: "Experience section title", line: false, cell: true, color: true },
+  { group: "Experience", key: "exp_item_title", label: "Job title line", line: false, cell: true, color: true },
+  { group: "Experience", key: "exp_item_date", label: "Date (right)", line: false, cell: true, color: true },
+  { group: "Experience", key: "exp_item_desc", label: "Description", line: true, cell: false, color: true },
+  { group: "Experience", key: "exp_tech_label", label: "Technologies : label", line: true, cell: false, color: true },
+  { group: "Experience", key: "exp_tech_body", label: "Technologies text", line: true, cell: false, color: true },
+  { group: "Education", key: "edu_section_title", label: "Education section title", line: false, cell: true, color: true },
+  { group: "Education", key: "edu_degree", label: "Degree line", line: false, cell: true, color: true },
+  { group: "Education", key: "edu_school", label: "School line", line: false, cell: true, color: true },
 ];
 
 export const qs = (id) => document.getElementById(id);
@@ -163,6 +163,13 @@ export class CvState {
           let cell_h = parseFloat(cellEl.value);
           if (Number.isNaN(cell_h) || cell_h <= 0) cell_h = base.cell_h;
           result.cell_h = cell_h;
+        }
+      }
+
+      if (row.color) {
+        const colorEl = qsFn(`pdf_font_${key}_color`);
+        if (colorEl) {
+          result.color = colorEl.value || base.color;
         }
       }
 

@@ -82,9 +82,23 @@ async function loadCvById(id) {
     if (!state.cv.header) state.cv.header = { name: "", title: "" };
     if (!state.cv.summary) state.cv.summary = { title: "RÉSUMÉ PROFESSIONNEL", text: "" };
     if (!state.cv.sidebar) state.cv.sidebar = {};
+    // Render UI immediately from the loaded version
     renderer.renderAll();
     renderer.setStatus("Ready");
     state.setDirty(false);
+
+    // Persist the selected version as the current CV on the server so
+    // the `/api/pdf` endpoint (which reads the server-side JSON) will
+    // render the newly selected data. Do this before refreshing the PDF.
+    try {
+      renderer.setStatus("Applying selection to server…");
+      await CvApi.saveDraft(state.cv);
+    } catch (err) {
+      // non-fatal: still attempt to refresh PDF, but notify user
+      renderer.setStatus("Failed to apply selection to server");
+      console.warn("Failed to save selected CV to server:", err);
+    }
+
     renderer.refreshPdf();
   } catch (error) {
     renderer.setStatus("Load failed");
