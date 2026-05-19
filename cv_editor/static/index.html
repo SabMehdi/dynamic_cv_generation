@@ -65,6 +65,27 @@
             </div>
           </div>
 
+          <div class="panel" style="background: rgba(0,0,0,0.0); border-color: rgba(255,255,255,.12); margin-bottom: 14px;">
+            <div class="panel-header">
+              <div>
+                <h2>Sidebar typography</h2>
+                <p>Adjust sidebar font properties for contact, section titles, skills, and language text.</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div id="sidebarFontPanel" class="grid" style="grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="field"><label>Contact title</label><button class="btnFontMenu" type="button" data-font-key="sidebar_contact_title">Fonts</button></div>
+                <div class="field"><label>Contact lines</label><button class="btnFontMenu" type="button" data-font-key="sidebar_contact_text">Fonts</button></div>
+                <div class="field"><label>Photo placeholder</label><button class="btnFontMenu" type="button" data-font-key="sidebar_photo_label">Fonts</button></div>
+                <div class="field"><label>Section titles</label><button class="btnFontMenu" type="button" data-font-key="sidebar_block_title">Fonts</button></div>
+                <div class="field"><label>Certification text</label><button class="btnFontMenu" type="button" data-font-key="sidebar_cert_text">Fonts</button></div>
+                <div class="field"><label>Skill category</label><button class="btnFontMenu" type="button" data-font-key="sidebar_skill_category">Fonts</button></div>
+                <div class="field"><label>Skill items</label><button class="btnFontMenu" type="button" data-font-key="sidebar_skill_items">Fonts</button></div>
+                <div class="field"><label>Language text</label><button class="btnFontMenu" type="button" data-font-key="sidebar_lang_text">Fonts</button></div>
+              </div>
+            </div>
+          </div>
+
           <div style="height: 14px"></div>
 
           <div class="panel" style="background: rgba(0,0,0,0.0); border-color: rgba(255,255,255,.12); margin-bottom: 14px;">
@@ -77,18 +98,6 @@
             <div class="panel-body">
               <div id="mainOffsetsList" class="list"></div>
               <div class="hint" style="margin-top:8px;">Up = -2mm, Down = +2mm (saved in `main_offsets`).</div>
-            </div>
-          </div>
-
-          <div class="panel" style="background: rgba(0,0,0,0.0); border-color: rgba(255,255,255,.12); margin-bottom: 14px;">
-            <div class="panel-header">
-              <div>
-                <h2>PDF typography</h2>
-                <p>Font size (pt), style, line height / row height (mm) for the exported PDF. Save, then refresh preview.</p>
-              </div>
-            </div>
-            <div class="panel-body">
-              <div id="pdfFontsPanel" class="pdf-fonts-root"></div>
             </div>
           </div>
 

@@ -155,7 +155,69 @@ button:disabled {
   gap: 6px;
 }
 
-.field label {
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.field-label-row label {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.btnFontMenu {
+  border: 1px solid rgba(122, 162, 255, 0.28);
+  background: rgba(122, 162, 255, 0.1);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.font-popup {
+  position: absolute;
+  min-width: 280px;
+  max-width: 340px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(11, 16, 32, 0.96);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  z-index: 9999;
+}
+
+.font-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.font-popup-header div {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.btnCloseFontMenu {
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.font-popup-body .field {
+  margin-bottom: 10px;
+}
+
+.font-popup-body .field label {
   font-size: 12px;
   color: var(--muted);
 }

@@ -22,6 +22,8 @@ _FONT_DEFAULTS: Dict[str, Dict[str, Any]] = {
     "summary_title": {"size": 11, "style": "B", "cell_h": 5},
     "summary_body": {"size": 9, "style": "", "line": 4},
     "exp_section_title": {"size": 11, "style": "B", "cell_h": 5},
+    "exp_company_title": {"size": 10, "style": "B", "cell_h": 5},
+    "exp_company_period": {"size": 8, "style": "I", "cell_h": 5},
     "exp_item_title": {"size": 10, "style": "B", "cell_h": 5},
     "exp_item_date": {"size": 8, "style": "I", "cell_h": 5},
     "exp_item_desc": {"size": 8, "style": "", "line": 4},
@@ -88,12 +90,22 @@ class CV(FPDF):
             for k, v in user.items():
                 if v is None or v == "":
                     continue
-                if k in base or k in ("size", "style", "line", "cell_h"):
+                if k in base or k in ("size", "style", "line", "cell_h", "color"):
                     base[k] = v
         style = str(base.get("style", "") or "")
         if style not in ("", "B", "I", "BI"):
             style = ""
         base["style"] = style
+        color = base.get("color")
+        if isinstance(color, str):
+            color = color.strip()
+            if color:
+                base["color"] = color
+            else:
+                base.pop("color", None)
+        else:
+            base.pop("color", None)
+
         try:
             base["size"] = float(base["size"])
         except Exception:
@@ -111,6 +123,22 @@ class CV(FPDF):
                 dch = _FONT_DEFAULTS[key].get("cell_h")
                 base["cell_h"] = float(dch) if dch is not None else base["size"] * 0.55
         return base
+
+    def _parse_color(self, color: Optional[str]) -> Optional[tuple[int, int, int]]:
+        if not isinstance(color, str):
+            return None
+        color = color.strip()
+        if color.startswith("#") and len(color) == 7:
+            try:
+                return (int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16))
+            except ValueError:
+                return None
+        return None
+
+    def _resolve_text_color(self, key: str, default_rgb: tuple[int, int, int]) -> tuple[int, int, int]:
+        font = self._font(key)
+        parsed = self._parse_color(font.get("color"))
+        return parsed if parsed is not None else default_rgb
 
     def _normalize_experience_items(self, exp: Dict[str, Any]) -> List[Dict[str, Any]]:
         raw_items = exp.get("items", []) or []
@@ -189,10 +217,10 @@ class CV(FPDF):
         Preferred:
         - sidebar.contact_items: [{ "text": "...", "icon_path": "C:/.../mail.png" }, ...]
         """
-        self.set_text_color(255, 255, 255)
         self.set_xy(5, 70)
         fc = self._font("sidebar_contact_title")
         self.set_font(self.font_family, fc["style"], fc["size"])
+        self.set_text_color(*self._resolve_text_color("sidebar_contact_title", (255, 255, 255)))
         self.cell(60, fc["cell_h"], sidebar.get("contact_title", "CONTACT"), 0, 1, "L")
 
         items = sidebar.get("contact_items")
@@ -221,11 +249,15 @@ class CV(FPDF):
                         pass
 
                 self.set_xy(x + icon + gap, y)
+                ft = self._font("sidebar_contact_text")
+                self.set_font(self.font_family, ft["style"], ft["size"])
+                self.set_text_color(*self._resolve_text_color("sidebar_contact_text", (255, 255, 255)))
                 self.multi_cell(text_w, line_h, text, 0, "L")
                 self.ln(0.5)
         else:
             ft = self._font("sidebar_contact_text")
             self.set_font(self.font_family, ft["style"], ft["size"])
+            self.set_text_color(*self._resolve_text_color("sidebar_contact_text", (255, 255, 255)))
             contact_lines: List[str] = sidebar.get("contact_lines", [])
             self.multi_cell(60, ft["line"], "\n".join(contact_lines), 0, "L")
 
@@ -257,14 +289,17 @@ class CV(FPDF):
         self.set_xy(5, self.get_y() + 6)
         fb = self._font("sidebar_block_title")
         self.set_font(self.font_family, fb["style"], fb["size"])
+        self.set_text_color(*self._resolve_text_color("sidebar_block_title", (255, 255, 255)))
         self.cell(60, fb["cell_h"], sidebar.get("certifications_title", "CERTIFICATIONS"), 0, 1, "L")
         fcert = self._font("sidebar_cert_text")
         self.set_font(self.font_family, fcert["style"], fcert["size"])
+        self.set_text_color(*self._resolve_text_color("sidebar_cert_text", (255, 255, 255)))
         for cert in sidebar.get("certifications", []):
             self.cell(60, fcert["cell_h"], str(cert), 0, 1, "L")
 
         self.set_xy(5, self.get_y() + 6)
         self.set_font(self.font_family, fb["style"], fb["size"])
+        self.set_text_color(*self._resolve_text_color("sidebar_block_title", (255, 255, 255)))
         self.cell(60, fb["cell_h"], sidebar.get("skills_title", "COMPÉTENCES"), 0, 1, "L")
 
         skills: List[Dict[str, str]] = sidebar.get("skills", [])
@@ -274,18 +309,20 @@ class CV(FPDF):
             category = str(item.get("category", ""))
             value = str(item.get("items", ""))
             self.set_font(self.font_family, fcat["style"], fcat["size"])
-            self.set_text_color(173, 216, 230)
+            self.set_text_color(*self._resolve_text_color("sidebar_skill_category", (173, 216, 230)))
             self.cell(60, fcat["cell_h"], category, 0, 1, "L")
             self.set_font(self.font_family, fitems["style"], fitems["size"])
-            self.set_text_color(255, 255, 255)
+            self.set_text_color(*self._resolve_text_color("sidebar_skill_items", (255, 255, 255)))
             self.multi_cell(60, fitems["line"], value, 0, "L")
             self.ln(1)
 
         self.set_xy(5, self.get_y() + 6)
         self.set_font(self.font_family, fb["style"], fb["size"])
+        self.set_text_color(*self._resolve_text_color("sidebar_block_title", (255, 255, 255)))
         self.cell(60, fb["cell_h"], sidebar.get("languages_title", "LANGUES"), 0, 1, "L")
         fl = self._font("sidebar_lang_text")
         self.set_font(self.font_family, fl["style"], fl["size"])
+        self.set_text_color(*self._resolve_text_color("sidebar_lang_text", (255, 255, 255)))
         for lang in sidebar.get("languages", []):
             self.cell(60, fl["cell_h"], str(lang), 0, 1, "L")
 
@@ -315,6 +352,7 @@ class CV(FPDF):
             self.set_xy(x0, y)
             f = self._font("header_name")
             self.set_font(self.font_family, f["style"], f["size"])
+            self.set_text_color(*self._resolve_text_color("header_name", (41, 54, 82)))
             self.multi_cell(w, f["line"], self._fit_header_text(header.get("name", "")), 0, "L")
             return float(self.get_y())
 
@@ -322,6 +360,7 @@ class CV(FPDF):
             self.set_xy(x0, y)
             f = self._font("header_title")
             self.set_font(self.font_family, f["style"], f["size"])
+            self.set_text_color(*self._resolve_text_color("header_title", (41, 54, 82)))
             self.multi_cell(w, f["line"], self._fit_header_text(header.get("title", "")), 0, "L")
             return float(self.get_y())
 
@@ -329,11 +368,13 @@ class CV(FPDF):
             self.set_xy(x0, y)
             ft = self._font("summary_title")
             self.set_font(self.font_family, ft["style"], ft["size"])
+            self.set_text_color(*self._resolve_text_color("summary_title", (41, 54, 82)))
             self.cell(130, ft["cell_h"], str(summary.get("title", "RÉSUMÉ PROFESSIONNEL")), 0, 1, "L")
             self.set_draw_color(41, 54, 82)
             self.line(75, self.get_y(), 200, self.get_y())
             fb = self._font("summary_body")
             self.set_font(self.font_family, fb["style"], fb["size"])
+            self.set_text_color(*self._resolve_text_color("summary_body", (41, 54, 82)))
             self.set_xy(75, self.get_y() + 2)
             self.multi_cell(125, fb["line"], str(summary.get("text", "")), 0, "L")
             return float(self.get_y())
@@ -342,11 +383,14 @@ class CV(FPDF):
             self.set_xy(75, y)
             fs = self._font("exp_section_title")
             self.set_font(self.font_family, fs["style"], fs["size"])
+            self.set_text_color(*self._resolve_text_color("exp_section_title", (41, 54, 82)))
             self.cell(130, fs["cell_h"], str(exp.get("title", "EXPÉRIENCE PROFESSIONNELLE")), 0, 1, "L")
             self.line(75, self.get_y(), 200, self.get_y())
 
             y_offset = float(self.get_y() + 2)
             experiences = self._normalize_experience_items(exp)
+            fct = self._font("exp_company_title")
+            fcp = self._font("exp_company_period")
             fit = self._font("exp_item_title")
             fid = self._font("exp_item_date")
             fde = self._font("exp_item_desc")
@@ -363,10 +407,12 @@ class CV(FPDF):
 
                 if show_group_header:
                     self.set_xy(75, y_offset)
-                    self.set_font(self.font_family, fit["style"], fit["size"])
-                    self.cell(100, fit["cell_h"], company or "Experience", 0, 0, "L")
-                    self.set_font(self.font_family, fid["style"], fid["size"])
-                    self.cell(25, fid["cell_h"], period, 0, 1, "R")
+                    self.set_font(self.font_family, fct["style"], fct["size"])
+                    self.set_text_color(*self._resolve_text_color("exp_company_title", (41, 54, 82)))
+                    self.cell(100, fct["cell_h"], company or "Experience", 0, 0, "L")
+                    self.set_font(self.font_family, fcp["style"], fcp["size"])
+                    self.set_text_color(*self._resolve_text_color("exp_company_period", (41, 54, 82)))
+                    self.cell(25, fcp["cell_h"], period, 0, 1, "R")
                     y_offset = float(self.get_y() + 2)
 
                 for mission_index, mission in enumerate(missions):
@@ -378,11 +424,14 @@ class CV(FPDF):
 
                     self.set_xy(75, y_offset)
                     self.set_font(self.font_family, fit["style"], fit["size"])
+                    self.set_text_color(*self._resolve_text_color("exp_item_title", (41, 54, 82)))
                     self.cell(100, fit["cell_h"], display_title, 0, 0, "L")
                     self.set_font(self.font_family, fid["style"], fid["size"])
+                    self.set_text_color(*self._resolve_text_color("exp_item_date", (41, 54, 82)))
                     self.cell(25, fid["cell_h"], date, 0, 1, "R")
 
                     self.set_font(self.font_family, fde["style"], fde["size"])
+                    self.set_text_color(*self._resolve_text_color("exp_item_desc", (41, 54, 82)))
                     self.set_x(75)
                     self.multi_cell(125, fde["line"], str(mission.get("desc", "")), 0, "L")
 
@@ -390,9 +439,10 @@ class CV(FPDF):
                     if techs:
                         self.set_x(75)
                         self.set_font(self.font_family, ftl["style"], ftl["size"])
-                        self.set_text_color(41, 54, 82)
+                        self.set_text_color(*self._resolve_text_color("exp_tech_label", (41, 54, 82)))
                         self.write(ftl["line"], "Technologies : ")
                         self.set_font(self.font_family, ftb["style"], ftb["size"])
+                        self.set_text_color(*self._resolve_text_color("exp_tech_body", (41, 54, 82)))
                         self.write(ftb["line"], techs)
                         self.ln(4)
                     else:
@@ -417,6 +467,7 @@ class CV(FPDF):
             self.set_xy(75, edu_start_y)
             fst = self._font("edu_section_title")
             self.set_font(self.font_family, fst["style"], fst["size"])
+            self.set_text_color(*self._resolve_text_color("edu_section_title", (41, 54, 82)))
             self.cell(130, fst["cell_h"], str(edu.get("title", "FORMATION ACADÉMIQUE")), 0, 1, "L")
             self.set_draw_color(41, 54, 82)
             self.line(75, self.get_y(), 200, self.get_y())
@@ -429,8 +480,10 @@ class CV(FPDF):
                 school = str(item.get("school", ""))
                 self.set_xy(75, edu_y)
                 self.set_font(self.font_family, fd["style"], fd["size"])
+                self.set_text_color(*self._resolve_text_color("edu_degree", (41, 54, 82)))
                 self.cell(125, fd["cell_h"], degree, 0, 1, "L")
                 self.set_font(self.font_family, fsch["style"], fsch["size"])
+                self.set_text_color(*self._resolve_text_color("edu_school", (41, 54, 82)))
                 self.set_x(75)
                 self.cell(125, fsch["cell_h"], school, 0, 1, "L")
                 edu_y += fd["cell_h"] + fsch["cell_h"] + 2

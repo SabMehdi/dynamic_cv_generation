@@ -39,6 +39,7 @@ async function loadCv() {
 }
 
 async function saveDraft() {
+  renderer.closeFontMenu();
   state.readMainFieldsIntoCv(qs);
   state.applyOrderFromDom(qs);
   renderer.setStatus("Saving draft…");
@@ -56,6 +57,7 @@ async function saveDraft() {
 }
 
 async function saveVersion() {
+  renderer.closeFontMenu();
   state.readMainFieldsIntoCv(qs);
   state.applyOrderFromDom(qs);
   renderer.setStatus("Saving version…");
@@ -147,6 +149,7 @@ qs("btnOpen").addEventListener("click", async () => {
   }
 });
 qs("btnExport").addEventListener("click", async () => {
+  renderer.closeFontMenu();
   const saved = await saveDraft();
   if (saved) refreshPdf();
 });
